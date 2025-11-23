@@ -1,167 +1,144 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R-Notes - تطبيق الملاحظات</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2fa8ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="R-Notes">
-    <meta name="description" content="تطبيق ملاحظات سريع وبسيط يعمل بدون إنترنت">
-    <meta name="keywords" content="ملاحظات, notes, تطبيق, أوفلاين">
-    <link rel="icon" href="icons/icon.png">
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
-    <link rel="apple-touch-startup-image" href="icons/icon-512x512.png">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="icons/icon-32x32.png">
-    
-    <link rel="stylesheet" href="styles.css">
+    <title>R.Notes</title>
+    <link rel="stylesheet" href="password/password.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="/inotes-removebg-preview.png">
+    <link rel="stylesheet" href="/sctile/styles.css">
 </head>
 <body>
-    <!-- الشريط العلوي -->
-    <div class="navbar">
-        <h1><i class="fas fa-sticky-note"></i> R-Notes</h1>
-        <div class="nav-buttons">
-            <button id="searchBtn" class="nav-btn" aria-label="بحث">
+    <!-- الهيدر الرئيسي -->
+    <div class="header">
+        <div class="logo">
+            <img src="/inotes-removebg-preview.png" alt="Inotes Logo" class="logo-image">
+            <span class="logo-text">R.Notes</span>
+        </div>
+        <div class="btn-content">
+            <button onclick="showArchive()"><i class="fa-solid fa-box-archive"></i></button>
+            <button onclick="showNewNote()"><i class="fas fa-plus"></i></button>
+            <button onclick="showSearch()"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي للملاحظات -->
+    <div class="notes-container" id="notesContainer">
+        <!-- الملاحظات ستظهر هنا -->
+    </div>
+
+    <!-- شريط البحث -->
+    <div class="search-content" id="search">
+        <div class="barlafita">
+            <button id="clus" onclick="hideSearch()"><i class="fas fa-arrow-left"></i></button>
+            <div class="search">
                 <i class="fas fa-search"></i>
-            </button>
-            <button id="settingsBtn" class="nav-btn" aria-label="إعدادات">
-                <i class="fas fa-cog"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- المحتوى الرئيسي -->
-    <div class="container">
-        <!-- قائمة الملاحظات -->
-        <div class="notes-list" id="notesList">
-            <!-- سيتم ملؤها ديناميكياً -->
-        </div>
-
-        <!-- حالة عدم وجود ملاحظات -->
-        <div class="empty-state" id="emptyState">
-            <i class="fas fa-sticky-note"></i>
-            <h2>لا توجد ملاحظات</h2>
-            <p>انقر على الزر أدناه لإنشاء ملاحظة جديدة</p>
-            <button id="createFirstNote" class="create-btn">إنشاء ملاحظة</button>
-        </div>
-    </div>
-
-    <!-- زر إضافة ملاحظة جديد -->
-    <button id="addNoteBtn" class="add-note-btn" aria-label="إضافة ملاحظة">
-        <i class="fas fa-plus"></i>
-    </button>
-
-    <!-- لافتة البحث -->
-    <div class="modal fullscreen-modal" id="searchModal">
-        <div class="modal-header">
-            <div class="search-container">
-                <button class="back-btn" id="closeSearch">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <input type="text" id="searchInput" placeholder="ابحث في ملاحظاتك...">
+            <input type="text" id="searchInput" placeholder="Search..." oninput="performSearch()" autocomplete="off" spellcheck="false">
             </div>
         </div>
-        <div class="modal-content">
-            <div class="search-results" id="searchResults">
-                <!-- نتائج البحث -->
-            </div>
+        <div class="search-results" id="searchResults">
+            <!-- نتائج البحث تظهر هنا -->
         </div>
     </div>
 
-    <!-- لافتة الإعدادات -->
-    <div class="modal fullscreen-modal" id="settingsModal">
-        <div class="modal-header">
-            <h2>الإعدادات</h2>
-            <button class="back-btn" id="closeSettings">
-                <i class="fas fa-arrow-right"></i>
-            </button>
+    <!-- محرر الملاحظات الجديدة -->
+    <div class="plusnuts" id="plusnuts">
+        <div class="barlafita">
+            <button id="clus" onclick="hideNewNote()"><i class="fas fa-arrow-left"></i></button>
+            <input type="text" id="noteTitle" placeholder="Note Title..." oncontextmenu="showTextContextMenu(event, 'title')" autocomplete="off">
         </div>
-        <div class="modal-content">
-            <div class="settings-options">
-                <div class="setting-item">
-                    <label for="themeSelect">المظهر:</label>
-                    <select id="themeSelect">
-                        <option value="dark">داكن</option>
-                        <option value="light">فاتح</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <label for="fontSize">حجم الخط:</label>
-                    <select id="fontSize">
-                        <option value="small">صغير</option>
-                        <option value="medium" selected>متوسط</option>
-                        <option value="large">كبير</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <label>تثبيت التطبيق:</label>
-                    <button id="installBtn" class="action-btn" style="display: none;">
-                        تثبيت التطبيق
-                    </button>
-                    <span id="installStatus">التطبيق مثبت ✓</span>
-                </div>
-            </div>
+        <textarea id="noteContent" placeholder="Start typing your note..." oncontextmenu="showTextContextMenu(event, 'content')"></textarea>
+    </div>
+
+    <!-- الأرشيف -->
+    <div class="archive-content" id="archive">
+        <div class="barlafita">
+            <button id="clus" onclick="hideArchive()"><i class="fas fa-arrow-left"></i></button>
+            <span>Archive</span>
+        </div>
+        <div class="archive-notes" id="archive-notes">
+            <!-- الملاحظات المؤرشفة تظهر هنا -->
         </div>
     </div>
 
-    <!-- محرر الملاحظات -->
-    <div class="modal fullscreen-modal" id="editorModal">
-        <div class="modal-header">
-            <input type="text" id="noteTitle" placeholder="عنوان الملاحظة">
-            <button class="back-btn" id="closeEditor">
-                <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
-        <div class="modal-content">
-            <textarea id="noteContent" placeholder="ابدأ بكتابة ملاحظتك هنا..."></textarea>
-        </div>
-        <div class="editor-footer">
-            <span id="lastSaved">لم يتم الحفظ بعد</span>
-        </div>
-    </div>
-
-    <!-- قائمة السياق (الضغط المطول) -->
+    <!-- قائمة السياق للملاحظات -->
     <div class="context-menu" id="contextMenu">
-        <ul>
-            <li id="pinNote"><i class="fas fa-thumbtack"></i> تثبيت</li>
-            <li id="shareNote"><i class="fas fa-share"></i> مشاركة</li>
-            <li id="deleteNote" class="danger"><i class="fas fa-trash"></i> حذف</li>
-        </ul>
+        <div class="context-item" onclick="togglePinContext()">
+            <i class="fas fa-thumbtack"></i>
+            <span id="pinText">Pin</span>
+        </div>
+        <div class="context-item" onclick="exportToPDF()">
+            <i class="fas fa-file-pdf"></i>
+            <span>Export PDF</span>
+        </div>
+        <div class="context-item delete" onclick="deleteNoteContext()">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+        </div>
     </div>
 
-    <!-- لافتة النسخ واللصق والقص -->
-    <div class="copy-menu" id="copyMenu">
-        <button id="copyBtn" class="copy-menu-btn">
-            <i class="fas fa-copy"></i> نسخ
-        </button>
-        <button id="pasteBtn" class="copy-menu-btn">
-            <i class="fas fa-paste"></i> لصق
-        </button>
-        <button id="cutBtn" class="copy-menu-btn">
-            <i class="fas fa-cut"></i> قص
-        </button>
+    <!-- قائمة السياق للأرشيف -->
+    <div class="context-menu archive-context-menu" id="archiveContextMenu">
+        <div class="context-item" onclick="retrieveFromArchiveContext()">
+            <i class="fas fa-undo"></i>
+            <span>Retrieve Note</span>
+        </div>
+        <div class="context-item delete" onclick="deleteFromArchiveContext()">
+            <i class="fas fa-trash"></i>
+            <span>Delete Note</span>
+        </div>
     </div>
 
-    <!-- رسالة حالة الاتصال -->
-    <div id="connectionStatus" class="connection-status">
-        <i class="fas fa-wifi"></i>
-        <span>الاتصال بالإنترنت متاح</span>
+    <!-- قائمة السياق للنص -->
+    <div class="text-context-menu" id="textContextMenu">
+        <div class="context-item" onclick="copySelectedText()">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+        </div>
+        <div class="context-item" onclick="cutSelectedText()">
+            <i class="fas fa-cut"></i>
+            <span>Cut</span>
+        </div>
+        <div class="context-item" onclick="pasteText()">
+            <i class="fas fa-paste"></i>
+            <span>Paste</span>
+        </div>
+        <div class="context-item" onclick="SelectallText()">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Select all</span>
+        </div>
     </div>
 
-    <!-- الاستيراد من الملفات الخارجية -->
-    <script src="db.js"></script>
-    <script src="script.js"></script>
-    <script src="pwa.js"></script>
-    <script src="/jsapp/service-worker.js"></script>
+    <!-- لافتة الأرشيف -->
+    <div class="archive-modal" id="archiveModal">
+        <div class="modal-content">
+            <h3>Note Options</h3>
+            <p id="archiveNoteTitle"></p>
+            <div class="modal-actions">
+                <button class="btn-retrieve" onclick="retrieveFromArchiveModal()">
+                    <i class="fas fa-undo"></i> Retrieve Note
+                </button>
+                <button class="btn-delete" onclick="deleteFromArchiveModal()">
+                    <i class="fas fa-trash"></i> Delete Note
+                </button>
+                <button class="btn-cancel" onclick="hideArchiveModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="password" id="password">
+        <div class="enter-password">
+            <h2>Enter Password</h2>
+            <input type="password" id="passwordInput" placeholder="Password...">
+            <button onclick="checkPassword()">Login</button>
+        </div>
+    </div>
+
+    <script src="password/password.js"></script>
+    <script src="/sctile/script.js"></script>
 </body>
 </html>
