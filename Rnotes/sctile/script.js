@@ -492,7 +492,7 @@ function deleteFromArchive(noteId) {
     }
 }
 
-// وظائف النص - تم إضافة وظيفة SelectallText
+// وظائف النص
 function copySelectedText() {
     const element = currentTextContextType === 'title' ? document.getElementById('noteTitle') : document.getElementById('noteContent');
     const selectedText = element.value.substring(element.selectionStart, element.selectionEnd);
@@ -538,7 +538,7 @@ function pasteText() {
     hideTextContextMenu();
 }
 
-// وظيفة تحديد النص بالكامل - جديدة
+// وظيفة تحديد النص بالكامل
 function SelectallText() {
     const element = currentTextContextType === 'title' ? document.getElementById('noteTitle') : document.getElementById('noteContent');
     
@@ -703,8 +703,10 @@ function escapeHtml(unsafe) {
         .replace(/\n/g, '<br>');
 }
 
-
 // منع القائمة السياقية بالكامل
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault(); // يمنع ظهور القائمة
 });
+
+
+
