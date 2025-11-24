@@ -710,3 +710,6 @@ document.addEventListener('contextmenu', function(e) {
 
 
 
+document.getElementById("motemusic").addEventListener("click", function() {
+    window.location.href = "/notes music/motesmusic.html";
+});
